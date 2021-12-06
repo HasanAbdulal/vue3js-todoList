@@ -2,7 +2,13 @@
   <section class="todoapp">
     <header class="header">
       <h1>todos</h1>
-      <input class="new-todo" placeholder="What needs to be done?" autofocus />
+      <input
+        class="new-todo"
+        placeholder="What needs to be done?"
+        autofocus
+        v-model="new_todo"
+        @keyup.enter="add"
+      />
     </header>
     <section class="main">
       <input id="toggle-all" class="toggle-all" type="checkbox" />
@@ -48,7 +54,18 @@ export default {
   data() {
     return {
       todos: [],
+      new_todo: '',
     };
+  },
+  methods: {
+    async add() {
+      this.todos.push(
+        await DB.addOne({
+          content: this.new_todo,
+        })
+      );
+      this.new_todo = '';
+    },
   },
   async created() {
     DB.setApiURL(this.url);

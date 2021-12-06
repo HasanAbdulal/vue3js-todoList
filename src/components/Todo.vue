@@ -1,27 +1,60 @@
 <template>
-  <li :data-id="todo.id" :class="completed">
+  <li :data-id="todo.id" :class="{ completed, editing }">
     <div class="view">
-      <input class="toggle" type="checkbox" v-model="todo.completed" />
-      <label>{{ todo.content }}</label>
-      <button class="destroy"></button>
+      <input
+        class="toggle"
+        type="checkbox"
+        v-model="todo.completed"
+        @change="update"
+      />
+      <label @dblclick="toggleIsEdited"> {{ todo.content }}</label>
+      <button class="destroy" @click="delete"></button>
     </div>
+    <input
+      class="edit"
+      v-model="todo.content"
+      @keyup.enter="[update(), toggleIsEdited()]"
+    />
   </li>
 </template>
 
 <script>
+import DB from '../services/DB.js';
+
 export default {
   props: {
     todo: Object,
+  },
+  data() {
+    return {
+      isEdited: false,
+    };
   },
   computed: {
     completed() {
       return this.todo.completed ? 'completed' : '';
     },
+    editing() {
+      return this.isEdited ? 'editing' : '';
+    },
+  },
+  methods: {
+    async update() {
+      await DB.updateOneById(this.todo);
+    },
+    toggleIsEdited() {
+      this.isEdited = !this.isEdited;
+    },
+    async delete() {
+      this.$parent.todos = this.$parent.todos.filter((todo) => {
+        return todo.id !== this.todo.id;
+      });
+    },
   },
 };
 </script>
 
-<style scoped>
+<style>
 .todo-list li {
   position: relative;
   font-size: 24px;
