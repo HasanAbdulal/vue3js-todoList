@@ -18,7 +18,7 @@
       </ul>
     </section>
     <footer class="footer">
-      <span class="todo-count"></span>
+      <span class="todo-count">{{ itemsLeft }} item(s) left</span>
       <ul class="filters">
         <li>
           <a href="#/" class="selected">All</a>
@@ -65,6 +65,11 @@ export default {
         })
       );
       this.new_todo = '';
+    },
+  },
+  computed: {
+    itemsLeft() {
+      return this.todos.filter((todo) => !todo.completed).length;
     },
   },
   async created() {

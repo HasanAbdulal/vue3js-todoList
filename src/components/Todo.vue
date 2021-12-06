@@ -46,6 +46,7 @@ export default {
       this.isEdited = !this.isEdited;
     },
     async delete() {
+      await DB.deleteOneById(this.todo.id);
       this.$parent.todos = this.$parent.todos.filter((todo) => {
         return todo.id !== this.todo.id;
       });
